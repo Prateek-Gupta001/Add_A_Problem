@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Inconveniences</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --primary-hover: #6D28D9;
+            --secondary: #EC4899;
+            --secondary-hover: #DB2777;
+            --background: #F3F4F6;
+            --surface: #FFFFFF;
+            --text: #1F2937;
+            --text-secondary: #6B7280;
+            --success: #10B981;
+            --error: #EF4444;
+            --card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 1rem;
+            color: white;
+            box-shadow: var(--card-shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .problem-list {
+            margin-bottom: 80px;
+        }
+
+        .problem-card {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transform: translateY(0);
+            transition: var(--transition);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .problem-text {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        .problem-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            border-top: 1px solid #E5E7EB;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .add-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 4rem;
+            height: 4rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.5);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            z-index: 100;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--surface);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            border-radius: 1rem;
+            position: relative;
+            box-shadow: var(--card-shadow);
+            animation: scaleUp 0.3s ease-out;
+        }
+
+        @keyframes scaleUp {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+        }
+
+        .close-btn:hover {
+            color: var(--text);
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.5);
+        }
+
+        .cookie-popup {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1001;
+            min-width: 350px;
+            max-width: 90%;
+        }
+
+        .cookie-popup.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .cookie-icon {
+            font-size: 3rem;
+            animation: wiggle 1s ease-in-out infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-15deg); }
+            75% { transform: rotate(15deg); }
+        }
+
+        .cookie-message {
+            flex: 1;
+        }
+
+        .cookie-message h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cookie-message p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .no-problems {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-secondary);
+        }
+
+        .no-problems i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-secondary);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            color: var(--primary);
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            header {
+                padding: 1.5rem;
+                margin-bottom: 2rem;
+            }
+            
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .problem-card {
+                padding: 1rem;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Add these new styles for the checkbox group */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+            user-select: none;
+            color: var(--text-secondary);
+        }
+
+        /* Add these styles in your CSS section */
+        .error-popup {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, var(--error), #FF6B6B);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1001;
+            min-width: 350px;
+            max-width: 90%;
+        }
+
+        .error-popup.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .error-icon {
+            font-size: 2rem;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-message {
+            flex: 1;
+        }
+
+        .error-message h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .error-message p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Daily Inconveniences</h1>
+            <p>Share your everyday problems and see what bothers others</p>
+        </header>
+
+        <div class="problem-list" id="problemList">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Loading problems...</p>
+            </div>
+        </div>
+    </div>
+
+    <button class="add-btn" id="addBtn">
+        <i class="fas fa-plus"></i>
+    </button>
+
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <button class="close-btn" id="closeModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2>Share Your Inconvenience</h2>
+            <form id="problemForm">
+                <div class="form-group">
+                    <label for="problem">What's bothering you today?*</label>
+                    <textarea id="problem" name="problem" required></textarea>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="anonymousCheck">
+                    <label for="anonymousCheck">Submit anonymously</label>
+                </div>
+                <div class="form-group" id="nameGroup">
+                    <label for="name">Your Name (optional)</label>
+                    <input type="text" id="name" name="name">
+                </div>
+                <div class="form-group" id="emailGroup">
+                    <label for="email">Email (optional)</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                <button type="submit" class="submit-btn">Share Problem</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="cookie-popup" id="cookiePopup">
+        <div class="cookie-icon">🍪</div>
+        <div class="cookie-message">
+            Thank you for your time and contribution! Here's a free virtual cookie for you! 🍪
+        </div>
+    </div>
+
+    <div class="error-popup" id="errorPopup">
+        <div class="error-icon">❌</div>
+        <div class="error-message">
+            <h3>Submission Error</h3>
+            <p>Failed to submit your problem. Please try again later.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const problemList = document.getElementById('problemList');
+            const addBtn = document.getElementById('addBtn');
+            const addModal = document.getElementById('addModal');
+            const closeModal = document.getElementById('closeModal');
+            const problemForm = document.getElementById('problemForm');
+            const anonymousCheck = document.getElementById('anonymousCheck');
+            const nameGroup = document.getElementById('nameGroup');
+            const emailGroup = document.getElementById('emailGroup');
+            const cookiePopup = document.getElementById('cookiePopup');
+            const errorPopup = document.getElementById('errorPopup');
+
+            // Toggle anonymous submission
+            anonymousCheck.addEventListener('change', function() {
+                if (this.checked) {
+                    nameGroup.style.display = 'none';
+                    emailGroup.style.display = 'none';
+                } else {
+                    nameGroup.style.display = 'block';
+                    emailGroup.style.display = 'block';
+                }
+            });
+
+            // Open modal
+            addBtn.addEventListener('click', function() {
+                addModal.style.display = 'flex';
+            });
+
+            // Close modal
+            closeModal.addEventListener('click', function() {
+                addModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(event) {
+                if (event.target === addModal) {
+                    addModal.style.display = 'none';
+                }
+            });
+
+            // Format date
+            function formatDate(dateString) {
+                const date = new Date(dateString);
+                return date.toLocaleString();
+            }
+
+            // Load all problems
+            async function loadProblems() {
+                try {
+                    const response = await fetch('http://localhost:8000/get_all_entries');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const problems = await response.json();
+                    
+                    problemList.innerHTML = '';
+                    
+                    if (problems.length === 0) {
+                        problemList.innerHTML = `
+                            <div class="no-problems">
+                                <i class="far fa-sad-tear"></i>
+                                <p>No problems shared yet. Be the first to share!</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    problems.forEach(problem => {
+                        const formattedDate = formatDate(problem.created_at);
+                        const card = document.createElement('div');
+                        card.className = 'problem-card';
+                        card.innerHTML = `
+                            <div class="problem-text">${problem.problem}</div>
+                            <div class="problem-meta">
+                                <div class="problem-author">Shared by: ${problem.name || 'Anonymous'}</div>
+                                <div class="problem-date">${formattedDate}</div>
+                            </div>
+                        `;
+                        problemList.appendChild(card);
+                    });
+                } catch (error) {
+                    console.error('Error loading problems:', error);
+                    problemList.innerHTML = `
+                        <div class="no-problems">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Error loading problems: ${error.message}</p>
+                        </div>
+                    `;
+                }
+            }
+
+            // Show cookie popup with a Promise
+            function showCookiePopup() {
+                return new Promise(resolve => {
+                    const popup = document.getElementById('cookiePopup');
+                    
+                    // Update popup content
+                    popup.innerHTML = `
+                        <div class="cookie-icon">🍪</div>
+                        <div class="cookie-message">
+                            <h3 style="margin-bottom: 0.5rem; color: white;">Thank You!</h3>
+                            <p>Your contribution has been added. Enjoy your virtual cookie! 🍪</p>
+                        </div>
+                    `;
+
+                    // Show popup with animation
+                    requestAnimationFrame(() => {
+                        popup.classList.add('show');
+                    });
+
+                    // Set a longer timeout (6 seconds)
+                    setTimeout(() => {
+                        // Start hide animation
+                        popup.classList.remove('show');
+                        
+                        // Wait for hide animation to complete before resolving
+                        setTimeout(resolve, 1000);
+                    }, 6000);
+                });
+            }
+
+            // Add this function to show error messages
+            function showErrorPopup(title, message) {
+                return new Promise(resolve => {
+                    const popup = document.createElement('div');
+                    popup.className = 'error-popup';
+                    popup.innerHTML = `
+                        <div class="error-icon">⚠️</div>
+                        <div class="error-message">
+                            <h3>${title}</h3>
+                            <p>${message}</p>
+                        </div>
+                    `;
+                    document.body.appendChild(popup);
+
+                    // Show popup with animation
+                    requestAnimationFrame(() => {
+                        popup.classList.add('show');
+                    });
+
+                    // Hide and remove after 5 seconds
+                    setTimeout(() => {
+                        popup.classList.remove('show');
+                        setTimeout(() => {
+                            document.body.removeChild(popup);
+                            resolve();
+                        }, 600);
+                    }, 5000);
+                });
+            }
+
+            // Update the form submission handler
+            problemForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                
+                const problemText = document.getElementById('problem').value.trim();
+                if (!problemText) {
+                    await showErrorPopup("Error", "Please describe your problem or inconvenience.");
+                    return;
+                }
+                
+                let name = "Anonymous";
+                let email = "";
+                
+                if (!anonymousCheck.checked) {
+                    name = document.getElementById('name').value.trim() || "Anonymous";
+                    email = document.getElementById('email').value.trim() || "";
+                }
+                
+                try {
+                    // Disable the submit button to prevent double submission
+                    const submitBtn = problemForm.querySelector('.submit-btn');
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Submitting...';
+
+                    const response = await fetch('http://localhost:8000/add_entry', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            problem: problemText,
+                            name: name,
+                            email: email
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.status === 'error') {
+                        // Show error message for inappropriate content
+                        await showErrorPopup(
+                            "Content Warning", 
+                            "Your submission couldn't be added as it may contain inappropriate content. Please revise and try again."
+                        );
+                        return;
+                    }
+                    
+                    // Reset form and close modal
+                    problemForm.reset();
+                    addModal.style.display = 'none';
+                    
+                    // Show success cookie popup and wait for it to complete
+                    await showCookiePopup();
+                    
+                    // Only then reload problems
+                    await loadProblems();
+                    
+                } catch (error) {
+                    console.error('Error submitting problem:', error);
+                    await showErrorPopup("Error", `Failed to submit your problem: ${error.message}`);
+                } finally {
+                    // Re-enable the submit button
+                    const submitBtn = problemForm.querySelector('.submit-btn');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Share Problem';
+                }
+            });
+            
+            // Initial load
+            loadProblems();
+        });
+    </script>
+</body>
+</html>
